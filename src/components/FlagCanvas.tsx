@@ -208,7 +208,7 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
       img.src = flagSrc;
     }, [flagSrc, updateMagicMask]);
 
-    // Animation loop for magic pixels
+    // Animation loop for magic pixels - sliding rainbow gradient
     useEffect(() => {
       const animate = () => {
         const overlay = overlayRef.current;
@@ -230,9 +230,10 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
           return;
         }
 
-        // Calculate current hue based on time (cycles every 2 seconds)
-        const hue = (Date.now() / 20) % 360;
-        const [r, g, b] = hslToRgb(hue, 1, 0.5);
+        const canvasWidth = overlay.width;
+
+        // Time offset for 2-second cycle (matches button animation)
+        const timeOffset = ((Date.now() % 2000) / 2000) * 360;
 
         // Create colored overlay where magic pixels are
         const overlayData = overlayCtx.createImageData(overlay.width, overlay.height);
@@ -241,6 +242,14 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
 
         for (let i = 0; i < maskPixels.length; i += 4) {
           if (maskPixels[i + 3] === 255) {
+            // Calculate x position for this pixel
+            const pixelIndex = i / 4;
+            const x = pixelIndex % canvasWidth;
+
+            // Hue based on x position (rainbow gradient) plus time offset (sliding)
+            const hue = ((x / canvasWidth) * 360 + timeOffset) % 360;
+            const [r, g, b] = hslToRgb(hue, 1, 0.5);
+
             overlayPixels[i] = r;
             overlayPixels[i + 1] = g;
             overlayPixels[i + 2] = b;

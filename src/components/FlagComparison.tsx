@@ -194,7 +194,7 @@ export default function FlagComparison({
     compareFlags();
   }, [drawnImageData, flagSrc]);
 
-  // Animation loop for magic pixels on drawn image
+  // Animation loop for magic pixels on drawn image - sliding rainbow gradient
   useEffect(() => {
     const animate = () => {
       const overlay = drawnOverlayRef.current;
@@ -211,9 +211,10 @@ export default function FlagComparison({
         return;
       }
 
-      // Calculate current hue based on time
-      const hue = (Date.now() / 20) % 360;
-      const [r, g, b] = hslToRgb(hue, 1, 0.5);
+      const canvasWidth = overlay.width;
+
+      // Time offset for 2-second cycle (matches button animation)
+      const timeOffset = ((Date.now() % 2000) / 2000) * 360;
 
       // Create colored overlay where magic pixels are
       const overlayData = overlayCtx.createImageData(overlay.width, overlay.height);
@@ -222,6 +223,14 @@ export default function FlagComparison({
 
       for (let i = 0; i < maskPixels.length; i += 4) {
         if (maskPixels[i + 3] === 255) {
+          // Calculate x position for this pixel
+          const pixelIndex = i / 4;
+          const x = pixelIndex % canvasWidth;
+
+          // Hue based on x position (rainbow gradient) plus time offset (sliding)
+          const hue = ((x / canvasWidth) * 360 + timeOffset) % 360;
+          const [r, g, b] = hslToRgb(hue, 1, 0.5);
+
           overlayPixels[i] = r;
           overlayPixels[i + 1] = g;
           overlayPixels[i + 2] = b;
