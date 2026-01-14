@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import type { Country, Continent } from '../data/countries';
-import { getRandomCountry } from '../data/countries';
+import { getRandomCountry, getRandomStartingColor } from '../data/countries';
 
 export type GameScreen = 'menu' | 'drawing' | 'result';
 
@@ -15,6 +15,7 @@ interface UseFlagGameReturn {
   continent: Continent | null;
   brushColor: string;
   brushSize: number;
+  startingColor: string;
   result: GameResult | null;
   startGame: (continent?: Continent) => void;
   setColor: (color: string) => void;
@@ -30,6 +31,7 @@ export function useFlagGame(): UseFlagGameReturn {
   const [continent, setContinent] = useState<Continent | null>(null);
   const [brushColor, setBrushColorState] = useState<string>('#000000');
   const [brushSize, setBrushSizeState] = useState<number>(20);
+  const [startingColor, setStartingColor] = useState<string>('#FFFFFF');
   const [result, setResult] = useState<GameResult | null>(null);
 
   const startGame = useCallback((selectedContinent?: Continent) => {
@@ -39,6 +41,8 @@ export function useFlagGame(): UseFlagGameReturn {
     // Set initial brush color to first color of the flag
     setBrushColorState(newCountry.colors[0]);
     setBrushSizeState(20);
+    // Set starting color (canvas background) to a random dominant color from the flag
+    setStartingColor(getRandomStartingColor(newCountry));
     setResult(null);
     setScreen('drawing');
   }, []);
@@ -76,6 +80,7 @@ export function useFlagGame(): UseFlagGameReturn {
     continent,
     brushColor,
     brushSize,
+    startingColor,
     result,
     startGame,
     setColor,

@@ -30,6 +30,7 @@ function App() {
     country,
     brushColor,
     brushSize,
+    startingColor,
     result,
     startGame,
     setColor,
@@ -118,6 +119,7 @@ function App() {
                 aspectRatio={country.aspectRatio}
                 brushColor={brushColor}
                 brushSize={brushSize}
+                startingColor={startingColor}
               />
             </div>
 

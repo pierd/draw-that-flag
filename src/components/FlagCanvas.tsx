@@ -18,17 +18,18 @@ interface FlagCanvasProps {
   brushColor: string;
   brushSize: number;
   height?: number;
+  startingColor?: string; // Background color for the canvas
 }
 
 const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
-  ({ aspectRatio, brushColor, brushSize, height = 300 }, ref) => {
+  ({ aspectRatio, brushColor, brushSize, height = 300, startingColor = '#FFFFFF' }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const isDrawingRef = useRef(false);
     const lastPosRef = useRef<{ x: number; y: number } | null>(null);
 
     const width = Math.round(height * aspectRatio);
 
-    // Initialize canvas with white background
+    // Initialize canvas with starting color background
     const initCanvas = useCallback(() => {
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -36,9 +37,9 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = startingColor;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-    }, []);
+    }, [startingColor]);
 
     useEffect(() => {
       initCanvas();
