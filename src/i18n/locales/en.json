@@ -17,7 +17,7 @@
     "backToMenu": "Back to Menu",
     "match": "Match",
     "coverage": "Coverage",
-    "magicColor": "Magic",
+    "magicColor": "Skip brush - use to paint tricky areas to exclude them from scoring",
     "brushSize": "Brush Size",
     "yourDrawing": "Your Drawing",
     "realFlag": "Real Flag",

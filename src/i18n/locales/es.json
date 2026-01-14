@@ -17,7 +17,7 @@
     "backToMenu": "Volver al menú",
     "match": "Coincidencia",
     "coverage": "Cobertura",
-    "magicColor": "Mágico",
+    "magicColor": "Pincel de omisión - úsalo para pintar áreas difíciles y excluirlas de la puntuación",
     "brushSize": "Tamaño del pincel",
     "yourDrawing": "Tu dibujo",
     "realFlag": "Bandera real",
