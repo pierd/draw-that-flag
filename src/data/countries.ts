@@ -69,7 +69,7 @@ export const countries: Country[] = [
   { name: 'Kenya', isoCode: 'ke', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#000000', '#BB0000', '#006600', '#FFFFFF'], startingColors: ['#000000', '#BB0000'] },
   { name: 'Ethiopia', isoCode: 'et', continent: 'Africa', aspectRatio: 2 / 1, colors: ['#298C08', '#FFC621', '#EF2118', '#006BC6'], startingColors: ['#298C08', '#FFC621', '#EF2118'] },
   { name: 'Ghana', isoCode: 'gh', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#CE1126', '#FCD116', '#006B3F', '#000000'], startingColors: ['#CE1126', '#FCD116', '#006B3F'] },
-  { name: 'Morocco', isoCode: 'ma', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#C1272D'], startingColors: ['#C1272D'] },
+  { name: 'Morocco', isoCode: 'ma', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#C1272D', '#006233'], startingColors: ['#C1272D'] },
   { name: 'Algeria', isoCode: 'dz', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#006233', '#FFFFFF', '#D21034'], startingColors: ['#006233', '#FFFFFF'] },
   { name: 'Tunisia', isoCode: 'tn', continent: 'Africa', aspectRatio: 3 / 2, colors: ['#E70013', '#FFFFFF'], startingColors: ['#E70013'] },
   { name: 'Libya', isoCode: 'ly', continent: 'Africa', aspectRatio: 2 / 1, colors: ['#E70013', '#000000', '#239E46', '#FFFFFF'], startingColors: ['#E70013', '#000000', '#239E46'] },
