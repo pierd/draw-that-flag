@@ -56,9 +56,6 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
 
     const width = Math.round(height * aspectRatio);
 
-    // Check if current brush is magic color
-    const isMagicBrush = brushColor === MAGIC_COLOR;
-
     // Initialize canvas with starting color background
     const initCanvas = useCallback(() => {
       const canvas = canvasRef.current;
@@ -322,10 +319,8 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
       ctx.lineJoin = 'round';
       ctx.stroke();
 
-      // Update mask if drawing with magic color
-      if (isMagicBrush) {
-        updateMagicMask();
-      }
+      // Update mask after any drawing (to handle painting over magic pixels)
+      updateMagicMask();
     };
 
     const drawDot = (pos: { x: number; y: number }) => {
@@ -340,10 +335,8 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
       ctx.fillStyle = brushColor;
       ctx.fill();
 
-      // Update mask if drawing with magic color
-      if (isMagicBrush) {
-        updateMagicMask();
-      }
+      // Update mask after any drawing (to handle painting over magic pixels)
+      updateMagicMask();
     };
 
     const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
