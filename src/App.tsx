@@ -51,6 +51,10 @@ function App() {
     canvasRef.current?.clear();
   };
 
+  const handleHint = () => {
+    canvasRef.current?.paintHint();
+  };
+
   return (
     <div className="app">
       <div className="background-grid" />
@@ -120,6 +124,7 @@ function App() {
                 brushColor={brushColor}
                 brushSize={brushSize}
                 startingColor={startingColor}
+                flagSrc={getFlagSrc(country.isoCode)}
               />
             </div>
 
@@ -142,6 +147,9 @@ function App() {
             <div className="action-buttons">
               <button className="button button-secondary" onClick={handleClear}>
                 {t('game.clear')}
+              </button>
+              <button className="button button-secondary" onClick={handleHint}>
+                {t('game.hint')}
               </button>
               <button className="button button-primary" onClick={handleDone}>
                 {t('game.done')}

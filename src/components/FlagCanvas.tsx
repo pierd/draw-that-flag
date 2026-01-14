@@ -12,6 +12,7 @@ export interface FlagCanvasHandle {
   getImageData: () => ImageData | null;
   clear: () => void;
   getCanvas: () => HTMLCanvasElement | null;
+  paintHint: () => void;
 }
 
 interface FlagCanvasProps {
@@ -20,6 +21,7 @@ interface FlagCanvasProps {
   brushSize: number;
   height?: number;
   startingColor?: string; // Background color for the canvas
+  flagSrc: string; // URL of the flag image for hint detection
 }
 
 // Helper to convert HSL to RGB
@@ -44,7 +46,7 @@ function hslToRgb(h: number, s: number, l: number): [number, number, number] {
 }
 
 const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
-  ({ aspectRatio, brushColor, brushSize, height = 300, startingColor = '#FFFFFF' }, ref) => {
+  ({ aspectRatio, brushColor, brushSize, height = 300, startingColor = '#FFFFFF', flagSrc }, ref) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const overlayRef = useRef<HTMLCanvasElement>(null);
     const magicMaskRef = useRef<ImageData | null>(null);
@@ -112,6 +114,103 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
       magicMaskRef.current = hasMagicPixels ? maskData : null;
     }, []);
 
+    // Calculate color difference (Euclidean distance in RGB space)
+    const colorDifference = (
+      r1: number, g1: number, b1: number,
+      r2: number, g2: number, b2: number
+    ): number => {
+      return Math.sqrt(
+        Math.pow(r1 - r2, 2) +
+        Math.pow(g1 - g2, 2) +
+        Math.pow(b1 - b2, 2)
+      );
+    };
+
+    // Paint hint edges on the canvas
+    const paintHint = useCallback(() => {
+      const canvas = canvasRef.current;
+      if (!canvas || !flagSrc) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      // Load the flag image
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        // Create temporary canvas to get flag pixel data
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = canvas.width;
+        tempCanvas.height = canvas.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (!tempCtx) return;
+
+        // Draw flag to temp canvas
+        tempCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const flagData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = flagData.data;
+
+        // Parameters for edge detection
+        const radius = 3; // Check pixels within this radius
+        const colorTolerance = 30; // Color difference threshold (accounts for antialiasing)
+
+        // Find edge pixels
+        const edgePixels: Array<{ x: number; y: number }> = [];
+
+        for (let y = 0; y < canvas.height; y++) {
+          for (let x = 0; x < canvas.width; x++) {
+            const idx = (y * canvas.width + x) * 4;
+            const r1 = data[idx];
+            const g1 = data[idx + 1];
+            const b1 = data[idx + 2];
+
+            let isEdge = false;
+
+            // Check neighboring pixels within radius
+            for (let dy = -radius; dy <= radius && !isEdge; dy++) {
+              for (let dx = -radius; dx <= radius && !isEdge; dx++) {
+                if (dx === 0 && dy === 0) continue;
+
+                const nx = x + dx;
+                const ny = y + dy;
+
+                // Skip out of bounds
+                if (nx < 0 || nx >= canvas.width || ny < 0 || ny >= canvas.height) continue;
+
+                // Only check pixels within circular radius
+                if (dx * dx + dy * dy > radius * radius) continue;
+
+                const nIdx = (ny * canvas.width + nx) * 4;
+                const r2 = data[nIdx];
+                const g2 = data[nIdx + 1];
+                const b2 = data[nIdx + 2];
+
+                const diff = colorDifference(r1, g1, b1, r2, g2, b2);
+                if (diff > colorTolerance) {
+                  isEdge = true;
+                }
+              }
+            }
+
+            if (isEdge) {
+              edgePixels.push({ x, y });
+            }
+          }
+        }
+
+        // Paint edge pixels with magic color
+        ctx.fillStyle = MAGIC_COLOR;
+        for (const { x, y } of edgePixels) {
+          ctx.fillRect(x, y, 1, 1);
+        }
+
+        // Update magic mask after painting
+        updateMagicMask();
+      };
+
+      img.src = flagSrc;
+    }, [flagSrc, updateMagicMask]);
+
     // Animation loop for magic pixels
     useEffect(() => {
       const animate = () => {
@@ -177,7 +276,8 @@ const FlagCanvas = forwardRef<FlagCanvasHandle, FlagCanvasProps>(
         initCanvas();
       },
       getCanvas: () => canvasRef.current,
-    }));
+      paintHint,
+    }), [initCanvas, paintHint]);
 
     const getPosition = (
       e: React.MouseEvent | React.TouchEvent
