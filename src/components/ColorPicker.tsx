@@ -1,5 +1,9 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import './ColorPicker.css';
+
+// Magic color constant - used to identify "skip" pixels in comparison
+export const MAGIC_COLOR = '#FF00FF';
 
 interface ColorPickerProps {
   colors: string[];
@@ -22,11 +26,19 @@ export default function ColorPicker({
   selectedColor,
   onColorSelect,
 }: ColorPickerProps) {
+  const { t } = useTranslation();
   // Shuffle colors once when the colors array changes (new country)
   const shuffledColors = useMemo(() => shuffleArray(colors), [colors]);
 
   return (
     <div className="color-picker">
+      {/* Magic color button - always first */}
+      <button
+        className={`color-btn color-btn-magic ${selectedColor === MAGIC_COLOR ? 'selected' : ''}`}
+        onClick={() => onColorSelect(MAGIC_COLOR)}
+        aria-label={t('game.magicColor')}
+        title={t('game.magicColor')}
+      />
       {shuffledColors.map((color) => (
         <button
           key={color}

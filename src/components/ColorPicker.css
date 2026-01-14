@@ -31,3 +31,23 @@
   outline: 1px solid rgba(0, 0, 0, 0.2);
   outline-offset: -1px;
 }
+
+/* Magic color button with animated rainbow gradient */
+.color-btn-magic {
+  background: linear-gradient(
+    90deg,
+    red, orange, yellow, lime, cyan, blue, magenta, red
+  );
+  background-size: 200% 100%;
+  animation: rainbow-slide 2s linear infinite;
+  outline: none;
+}
+
+@keyframes rainbow-slide {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 200% 50%;
+  }
+}
