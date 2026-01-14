@@ -30,7 +30,7 @@ export function useFlagGame(): UseFlagGameReturn {
   const [country, setCountry] = useState<Country | null>(null);
   const [continent, setContinent] = useState<Continent | null>(null);
   const [brushColor, setBrushColorState] = useState<string>('#000000');
-  const [brushSize, setBrushSizeState] = useState<number>(20);
+  const [brushSize, setBrushSizeState] = useState<number>(50);
   const [startingColor, setStartingColor] = useState<string>('#FFFFFF');
   const [result, setResult] = useState<GameResult | null>(null);
 
@@ -40,7 +40,7 @@ export function useFlagGame(): UseFlagGameReturn {
     setContinent(selectedContinent || null);
     // Set initial brush color to first color of the flag
     setBrushColorState(newCountry.colors[0]);
-    setBrushSizeState(20);
+    setBrushSizeState(50);
     // Set starting color (canvas background) to a random dominant color from the flag
     setStartingColor(getRandomStartingColor(newCountry));
     setResult(null);
