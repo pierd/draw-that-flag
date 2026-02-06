@@ -19,6 +19,8 @@
   position: absolute;
   top: 2px; /* Account for border */
   left: 2px;
+  width: calc(100% - 4px);
+  height: calc(100% - 4px);
   border-radius: 6px;
   pointer-events: none;
 }
